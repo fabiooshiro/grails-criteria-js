@@ -1,37 +1,170 @@
 <html>
 <head>
 	<title>Console</title>
+	<link rel="stylesheet" href="http://pivotal.github.io/jasmine/lib/jasmine-1.3.1/jasmine.css"/>
 	<script type="text/javascript">
 		var config = {
 			contextPath: '${request.contextPath}'
 		}
 	</script>
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="http://pivotal.github.io/jasmine/lib/jasmine-1.3.1/jasmine.js"></script>
+	<script src="http://pivotal.github.io/jasmine/lib/jasmine-1.3.1/jasmine-html.js"></script>
+	
 	<g:javascript src="criteria.js" />
 	<script type="text/javascript">
-		$(function(){
-			$('#btnRun').click(function(){
-				eval($('#criteria').val());
+
+		describe("criteria js", function(){
+			it("should sum", function(){
+				var done = false;
+				runs(function(){
+					new Criteria('Music')
+						.attr('album', function(album){
+							album.eq('id', new Long(1));
+						})
+						.projections(function(p){
+							p.sum('time');
+						})
+						.success(function(response){
+							expect(response.length).toEqual(1);
+							expect(response[0]).toEqual(123);
+							done = true;
+						})
+					;
+				});
+
+				waitsFor(function(){ return done; }, 'Test timeout', 10000);
 			});
+
+			it("should groupProperty", function(){
+				var done = false;
+				runs(function(){
+					new Criteria('Music')
+						.projections(function(p){
+							p.groupProperty('album');
+							p.sum('time');
+						})
+						.success(function(response){
+							expect(response[0][0].class).toBe("criteria.js.Album");
+							expect(response[0][1]).toEqual(123);
+							expect(response[1][0].class).toBe("criteria.js.Album");
+							expect(response[1][1]).toEqual(7.6);
+							done = true;
+						})
+					;
+				});
+				
+				waitsFor(function(){ return done; }, 'Test timeout', 10000);
+			});
+
+			it("should max", function(){
+				var done = false;
+				runs(function(){
+					new Criteria('Music')
+						.projections(function(p){
+							p.max('time');
+						})
+						.success(function(response){
+							expect(response.length).toEqual(1);
+							expect(response[0]).toEqual(100);
+							done = true;
+						})
+					;
+				});
+				waitsFor(function(){ return done; }, 'Test timeout', 10000);
+			});
+
+			it("should min", function(){
+				var done = false;
+				runs(function(){
+					new Criteria('Music')
+						.projections(function(p){
+							p.min('time');
+						})
+						.success(function(response){
+							expect(response.length).toEqual(1);
+							expect(response[0]).toEqual(2.2);
+							done = true;
+						})
+					;
+				});
+				waitsFor(function(){ return done; }, 'Test timeout', 10000);
+			});
+
+			it("should filter time > 3", function(){
+				var done = false;
+				runs(function(){
+					new Criteria('Music')
+						.gt('time', new BigDecimal(3))
+						.success(function(response){
+							expect(response.length).toEqual(3);
+							done = true;
+						})
+					;
+				});
+				waitsFor(function(){ return done; }, 'Test timeout', 10000);
+			});
+
+			it("should filter year == 2000", function(){
+				var done = false;
+				runs(function(){
+					new Criteria('Album')
+						.eq('year', 2000)
+						.success(function(response){
+							expect(response.length).toEqual(1);
+							expect(response[0].year).toEqual(2000);
+							done = true;
+						})
+					;
+				});
+				waitsFor(function(){ return done; }, 'Test timeout', 10000);
+			});
+
 		});
+		
 	</script>
 </head>
 <body>
-<textarea id="criteria">
-new Criteria('Music')
-	.attr('album', function(album){
-		album.eq('id', 1);
-	})
-	.projections(function(p){
-		p.sum('time');
-	})
-	.success(function(response){
-		$("#result").html(JSON.stringify(response));
-	})
-;
-</textarea>
-<input type="button" value="Run" id="btnRun" />
-<div id="result"></div>
+<script type="text/javascript">
+(function() {
+  var jasmineEnv = jasmine.getEnv();
+  jasmineEnv.updateInterval = 250;
+
+  /**
+   Create the `HTMLReporter`, which Jasmine calls to provide results of each spec and each suite. The Reporter is responsible for presenting results to the user.
+   */
+  var htmlReporter = new jasmine.HtmlReporter();
+  jasmineEnv.addReporter(htmlReporter);
+
+  /**
+   Delegate filtering of specs to the reporter. Allows for clicking on single suites or specs in the results to only run a subset of the suite.
+   */
+  jasmineEnv.specFilter = function(spec) {
+    return htmlReporter.specFilter(spec);
+  };
+
+  /**
+   Run all of the tests when the page finishes loading - and make sure to run any previous `onload` handler
+
+   ### Test Results
+
+   Scroll down to see the results of all of these specs.
+   */
+  var currentWindowOnload = window.onload;
+  window.onload = function() {
+    if (currentWindowOnload) {
+      currentWindowOnload();
+    }
+
+    //document.querySelector('.version').innerHTML = jasmineEnv.versionString();
+    execJasmine();
+  };
+
+  function execJasmine() {
+    jasmineEnv.execute();
+  }
+})();
+</script>
 </body>
 </html>
 		

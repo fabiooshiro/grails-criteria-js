@@ -6,19 +6,25 @@ class CriteriaJsController{
 
 	def grailsApplication
 
-	private Closure createClosure(itens){
+	private convertValue(obj){
+		if(obj['class'] instanceof String){
+			return Class.forName(obj['class']).newInstance(obj.value)
+		}
+		return obj
+	}
+
+	private Closure createClosure(_itens){
 		return {
-			itens.each{ _subItem ->
+			_itens.each{ _subItem ->
 				if(_subItem.type == 'closure'){
 					"${_subItem.name}"(createClosure(_subItem.itens))
 				}else if(_subItem.type == 'method'){
 					if(_subItem.args.size() == 1){
 						"${_subItem.name}"(_subItem.args[0])
 					}else if(_subItem.args.size() == 2){
-						def _value = _subItem.args[1]
-						"${_subItem.name}"(_subItem.args[0], _value instanceof Integer ? (long) _value: _value )
+						"${_subItem.name}"(_subItem.args[0], convertValue(_subItem.args[1]))
 					}else if(_subItem.args.size() == 3){
-						"${_subItem.name}"(_subItem.args[0], _subItem.args[1], _subItem.args[2])
+						"${_subItem.name}"(_subItem.args[0], convertValue(_subItem.args[1]), convertValue(_subItem.args[2]))
 					}else{
 						throw new RuntimeException('not implemented with 4 or more args')
 					}
