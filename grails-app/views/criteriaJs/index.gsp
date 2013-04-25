@@ -13,11 +13,20 @@
 	
 	<g:javascript src="criteria.js" />
 	<script type="text/javascript">
+		function step(description, fn, timeout){
+			var done = fn.length != 1; // has done arg in fn?
+			runs(function(){
+				fn(function(){
+					done = true;
+				});
+			});
+			waitsFor(function(){ return done; }, 'Timeout: ' + description, timeout?timeout:5000);
+		}
 
 		describe("criteria js", function(){
 			it("should sum", function(){
-				var done = false;
-				runs(function(){
+				var results = [];
+				step("call the server", function(done){
 					new Criteria('Music')
 						.attr('album', function(album){
 							album.eq('id', new Long(1));
@@ -26,14 +35,15 @@
 							p.sum('time');
 						})
 						.success(function(response){
-							expect(response.length).toEqual(1);
-							expect(response[0]).toEqual(123);
-							done = true;
+							results = response;
+							done();
 						})
 					;
 				});
-
-				waitsFor(function(){ return done; }, 'Test timeout', 10000);
+				step("verify results", function(){
+					expect(results.length).toEqual(1);
+					expect(results[0]).toEqual(123);
+				});
 			});
 
 			it("should groupProperty", function(){
