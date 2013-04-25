@@ -20,7 +20,7 @@
 					done = true;
 				});
 			});
-			waitsFor(function(){ return done; }, 'Timeout: ' + description, timeout?timeout:5000);
+			waitsFor(function(){ return done; }, 'step "' + description + '"', timeout?timeout:5000);
 		}
 
 		describe("criteria js", function(){
@@ -36,7 +36,7 @@
 						})
 						.success(function(response){
 							results = response;
-							done();
+							//done();
 						})
 					;
 				});
