@@ -12,7 +12,7 @@ class BootStrap {
 		def radioHead = new Artist(name: 'Radio Head').save(failOnError: true)
 		def album2 = new Album(artist: radioHead, year: 2000).save(failOnError: true)
 		new Music(album: album2, time: 2.2).save(failOnError: true)
-		new Music(album: album2, time: 5.4).save(failOnError: true)
+		new Music(album: album2, time: 5.4, name: 'OK Computer').save(failOnError: true)
     }
 
 }

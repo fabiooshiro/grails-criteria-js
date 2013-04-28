@@ -1,6 +1,7 @@
 package criteria.js
 
 import grails.converters.*
+import criteria.js.FetchMode
 
 class CriteriaJsController{
 
@@ -8,7 +9,11 @@ class CriteriaJsController{
 
 	private convertValue(obj){
 		if(obj['class'] instanceof String){
-			return Class.forName(obj['class']).newInstance(obj.value)
+			if(obj['id']){
+				return Class.forName(obj['class'], true, this.class.classLoader).get(obj['id'])
+			}else{
+				return Class.forName(obj['class']).newInstance(obj.value)
+			}
 		}
 		return obj
 	}

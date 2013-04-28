@@ -24,7 +24,7 @@
 		}
 
 		describe("criteria js", function(){
-			it("should sum", function(){
+			it("should sum music time", function(){
 				var results = [];
 				step("call the server", function(done){
 					new Criteria('Music')
@@ -46,9 +46,8 @@
 				});
 			});
 
-			it("should groupProperty", function(){
-				var done = false;
-				runs(function(){
+			it("should sum time and groupProperty album", function(){
+				step("call the server", function(done){
 					new Criteria('Music')
 						.projections(function(p){
 							p.groupProperty('album');
@@ -59,12 +58,10 @@
 							expect(response[0][1]).toEqual(123);
 							expect(response[1][0].class).toBe("criteria.js.Album");
 							expect(response[1][1]).toEqual(7.6);
-							done = true;
+							done();
 						})
 					;
 				});
-				
-				waitsFor(function(){ return done; }, 'Test timeout', 10000);
 			});
 
 			it("should max", function(){
@@ -128,6 +125,20 @@
 					;
 				});
 				waitsFor(function(){ return done; }, 'Test timeout', 10000);
+			});
+
+			it("should load eager", function(){
+				step("call server", function(done){
+					new Criteria('Music')
+						.eq('name', 'OK Computer')
+						.fetchMode('album', FetchMode.JOIN)
+						.fetchMode('album.artist', FetchMode.JOIN)
+						.success(function(response){
+							expect(response[0].album.year).toEqual(2000);
+							done();
+						})
+					;
+				});
 			});
 
 		});

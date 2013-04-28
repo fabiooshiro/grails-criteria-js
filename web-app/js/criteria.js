@@ -13,6 +13,11 @@ function LocalDate(val){
 	this.value = val;	
 }
 
+var FetchMode = {
+	JOIN: {class: 'criteria.js.FetchMode', id: 'JOIN'},
+	EAGER: {class: 'criteria.js.FetchMode', id: 'EAGER'}
+}
+
 function Criteria(clazz){
 	var url = config.contextPath + '/criteriaJs/list';
 	var self = this;
@@ -20,6 +25,11 @@ function Criteria(clazz){
 
 	this.getParams = function(){
 		return params;
+	};
+
+	this.fetchMode = function(prop, val){
+		params.criteria.push({type: 'method', name: 'fetchMode', args: [prop, val]});
+		return self;
 	};
 
 	this.like = function(prop, val){

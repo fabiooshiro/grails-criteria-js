@@ -2,7 +2,9 @@ package criteria.js
 
 class Album {
 
-	Artist artist
+	static belongsTo = [artist: Artist]
+
+	static hasMany = [musics: Music]
 
 	Integer year
 
