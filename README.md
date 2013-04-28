@@ -2,6 +2,8 @@ Criteria JS
 ===========
 
 
+<a href="http://margotskapacs.com/2013/04/localdate-as-json-and-other-types-to-custom-serialize-in-grails/">Custom JSON</a>
+
 Groovy
 ```groovy
 def belaBartok = new Artist(name: 'Béla Bartók').save(failOnError: true)
