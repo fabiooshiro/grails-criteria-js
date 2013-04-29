@@ -156,13 +156,21 @@ function Criteria(clazz){
 		return self;
 	};
 
-	this.success = function(callback){
+	this.postIt = function(callback){
 		$.ajax(url, {
     		data: JSON.stringify(params),
     		contentType : 'application/json',
     		type : 'POST',
     		success: callback
     	});
+	}
+
+	this.list = function(callback){
+		this.postIt(callback);
+	}
+
+	this.success = function(callback){
+		this.postIt(callback);
 	};
 }
 
