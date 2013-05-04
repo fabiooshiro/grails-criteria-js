@@ -1,14 +1,11 @@
 package criteria.js
 
-import spock.lang.Specification
-import java.util.List;
-
-import grails.test.mixin.*
-import static plastic.criteria.PlasticCriteria.* ; // mockCriteria() method
-
-import org.junit.*
-
+import static plastic.criteria.PlasticCriteria.* // mockCriteria() method
 import grails.converters.JSON
+import grails.test.mixin.Mock
+import grails.test.mixin.TestFor
+
+import spock.lang.Specification
 
 @TestFor(CriteriaJsController)
 @Mock([Album, Artist, Music])
@@ -22,10 +19,10 @@ class CriteriaJsControllerSpec extends Specification{
 			request.JSON = [clazz: 'Music']
 		when: "call the server"
 			controller.list()
-		then: 
-			def jsonStr = controller.response.contentAsString;
-			assert jsonStr;
-			def ls = JSON.parse(jsonStr);
+		then:
+			def jsonStr = controller.response.contentAsString
+			assert jsonStr
+			def ls = JSON.parse(jsonStr)
 			ls.size() == 2
 	}
 
@@ -44,7 +41,7 @@ class CriteriaJsControllerSpec extends Specification{
 			mockCriteria(Music)
 		and: "a criteria request"
 			request.JSON = [
-				clazz: 'Music', 
+				clazz: 'Music',
 				criteria: [
 					[ // item da criteria
 						type: 'closure',
@@ -67,13 +64,11 @@ class CriteriaJsControllerSpec extends Specification{
 			]
 		when: "call the server"
 			controller.list()
-		then: 
-			def jsonStr = controller.response.contentAsString;
-			assert jsonStr;
-			def ls = JSON.parse(jsonStr);
+		then:
+			def jsonStr = controller.response.contentAsString
+			assert jsonStr
+			def ls = JSON.parse(jsonStr)
 			ls.size() == 3
 			123.0 == ls.sum(0.0){it.time}
 	}
-
-
 }
