@@ -1,7 +1,6 @@
 package criteria.js
 
-import grails.converters.*
-import criteria.js.FetchMode
+import grails.converters.JSON
 
 class CriteriaJsController{
 
@@ -47,7 +46,7 @@ class CriteriaJsController{
 		def json = request.JSON
 		def clazz = getClazz(json.clazz)
 		def ls = clazz.withCriteria(createClosure(json.criteria))
-		render ls as JSON	
+		render ls as JSON
 	}
 
 	def index(){}
