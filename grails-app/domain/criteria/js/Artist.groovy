@@ -5,7 +5,4 @@ class Artist {
 	String name
 
 	static hasMany = [albuns: Album]
-
-    static constraints = {
-    }
 }
