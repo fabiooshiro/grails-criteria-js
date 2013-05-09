@@ -37,6 +37,11 @@ function Criteria(clazz){
 		return self;
 	};
 
+	this.ilike = function(prop, val){
+		params.criteria.push({type: 'method', name: 'ilike', args: [prop, val]});
+		return self;
+	}
+
 	this.eq = function(prop, val){
 		params.criteria.push({type: 'method', name: 'eq', args: [prop, val]});
 		return self;	
