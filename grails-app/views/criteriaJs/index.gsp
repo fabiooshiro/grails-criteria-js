@@ -141,6 +141,42 @@
 				});
 			});
 
+			it("should order by sum", function(){
+				step("call server asc", function(done){
+					new Criteria('Music')
+						.projections(function(p){
+							p.groupProperty('album');
+							p.sum('time', 'time');
+						})
+						.order('time', 'asc')
+						.success(function(response){
+							expect(response[0][0].class).toBe("criteria.js.Album");
+							expect(response[0][1]).toEqual(7.6);
+							expect(response[1][0].class).toBe("criteria.js.Album");
+							expect(response[1][1]).toEqual(123);
+							done();
+						})
+					;
+				});
+
+				step("call server desc", function(done){
+					new Criteria('Music')
+						.projections(function(p){
+							p.groupProperty('album');
+							p.sum('time', 'time');
+						})
+						.order('time', 'desc')
+						.success(function(response){
+							expect(response[0][0].class).toBe("criteria.js.Album");
+							expect(response[0][1]).toEqual(123);
+							expect(response[1][0].class).toBe("criteria.js.Album");
+							expect(response[1][1]).toEqual(7.6);
+							done();
+						})
+					;
+				});
+			});
+
 		});
 		
 	</script>

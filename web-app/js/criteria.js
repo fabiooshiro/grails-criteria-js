@@ -117,24 +117,32 @@ function Criteria(clazz){
 		return self;
 	};
 
-	this.sum = function(prop){
-		params.criteria.push({type: 'method', name: 'sum', args: [prop]});
+	function push2args(method, prop, arg){
+		if(arg){
+			params.criteria.push({type: 'method', name: method, args: [prop, arg]});	
+		}else{
+			params.criteria.push({type: 'method', name: method, args: [prop]});	
+		}
+	};
+
+	this.sum = function(prop, alias){
+		push2args('sum', prop, alias);
 		return self;	
 	};
 
-	this.max = function(prop){
-		params.criteria.push({type: 'method', name: 'max', args: [prop]});
-		return self;	
+	this.max = function(prop, alias){
+		push2args('max', prop, alias);
+		return self;
 	};
 
-	this.min = function(prop){
-		params.criteria.push({type: 'method', name: 'min', args: [prop]});
-		return self;	
+	this.min = function(prop, alias){
+		push2args('min', prop, alias);
+		return self;
 	};
 
-	this.avg = function(prop){
-		params.criteria.push({type: 'method', name: 'avg', args: [prop]});
-		return self;	
+	this.avg = function(prop, alias){
+		push2args('avg', prop, alias);
+		return self;
 	};
 
 	this.and = function(subCrit){
