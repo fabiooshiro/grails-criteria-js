@@ -117,14 +117,10 @@ function Criteria(clazz){
 		return self;
 	};
 
-	function push2args(method, prop, arg){
-		if(arg){
-			params.criteria.push({type: 'method', name: method, args: [prop, arg]});	
-		}else{
-			params.criteria.push({type: 'method', name: method, args: [prop]});	
-		}
+	function push2args(method){
+		params.criteria.push({type: 'method', name: method, args: [].slice.call(arguments, 1) });	
 	};
-
+	
 	this.sum = function(prop, alias){
 		push2args('sum', prop, alias);
 		return self;	
