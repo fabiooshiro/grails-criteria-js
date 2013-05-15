@@ -14,6 +14,11 @@ class CriteriaJsController{
 				return Class.forName(obj['class']).newInstance(obj.value)
 			}
 		}
+		if(obj instanceof String){
+			if(obj ==~ /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/){
+				return Date.parse('yyyy-MM-dd', obj)
+			}
+		}
 		return obj
 	}
 
