@@ -71,4 +71,19 @@ class CriteriaJsControllerSpec extends Specification{
 			ls.size() == 3
 			123.0 == ls.sum(0.0){it.time}
 	}
+
+	def "should get an artist"() {
+		given:"an artist"
+			def id = 1
+			def belaBartok = new Artist(name: 'Béla Bartók').save(validate: false)
+		and:"a criteria request"
+			request.JSON = [clazz: 'Artist']
+		when: "call the server"
+			controller.get(id)
+		then:
+			def jsonStr = controller.response.contentAsString
+			assert jsonStr
+			def artist = JSON.parse(jsonStr)
+			1 == belaBartok.id
+	}
 }

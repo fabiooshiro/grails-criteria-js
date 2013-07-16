@@ -49,5 +49,12 @@ class CriteriaJsController{
 		render ls as JSON
 	}
 
+	def get(id) {
+		def json = request.JSON
+		def clazz = getClazz(json.clazz)
+		def object = clazz.get(id)
+		render object as JSON
+	}
+
 	def index(){}
 }
