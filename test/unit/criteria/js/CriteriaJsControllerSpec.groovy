@@ -74,12 +74,11 @@ class CriteriaJsControllerSpec extends Specification{
 
 	def "should get an artist"() {
 		given:"an artist"
-			def id = 1
 			def belaBartok = new Artist(name: 'Béla Bartók').save(validate: false)
 		and:"a criteria request"
-			request.JSON = [clazz: 'Artist']
+			request.JSON = [clazz: 'Artist', id: 1]
 		when: "call the server"
-			controller.get(id)
+			controller.get()
 		then:
 			def jsonStr = controller.response.contentAsString
 			assert jsonStr

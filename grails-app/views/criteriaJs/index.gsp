@@ -141,6 +141,15 @@
 				});
 			});
 
+			it("should get an artist", function(){
+				step("call server", function(done){
+					new Criteria('Artist').get(new Long(1), function(response){
+							expect(response.id).toEqual(1);
+							done();
+					});
+				});
+			});
+
 			it("should order by sum", function(){
 				step("call server asc", function(done){
 					new Criteria('Music')
