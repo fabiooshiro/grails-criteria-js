@@ -72,6 +72,20 @@ class CriteriaJsControllerSpec extends Specification{
 			123.0 == ls.sum(0.0){it.time}
 	}
 
+	def "should get an artist"() {
+		given:"an artist"
+			def belaBartok = new Artist(name: 'Béla Bartók').save(validate: false)
+		and:"a criteria request"
+			request.JSON = [clazz: 'Artist', id: 1]
+		when: "call the server"
+			controller.get()
+		then:
+			def jsonStr = controller.response.contentAsString
+			assert jsonStr
+			def artist = JSON.parse(jsonStr)
+			1 == belaBartok.id
+	}
+
 	def "should convert date string by pattern"(){
 		given: "a music list"
 			new Music(date: new Date('2013/05/04')).save(validate: false)
@@ -97,5 +111,4 @@ class CriteriaJsControllerSpec extends Specification{
 			def ls = JSON.parse(jsonStr)
 			ls.size() == 2
 	}
-
 }
