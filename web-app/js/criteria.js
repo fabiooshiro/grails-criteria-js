@@ -21,7 +21,7 @@ var FetchMode = {
 function Criteria(clazz){
 	var url = config.contextPath + '/criteriaJs/list';
 	var self = this;
-	var params = {clazz: clazz, criteria: []};
+	var params = {clazz: clazz, criteria: [], id:0};
 
 	this.getParams = function(){
 		return params;
@@ -181,6 +181,13 @@ function Criteria(clazz){
 	this.list = function(callback){
 		this.postIt(callback);
 	}
+
+	this.get = function(id, callback){
+		url = config.contextPath + '/criteriaJs/get';
+		params.id = id;
+		console.log(params)
+		this.postIt(callback);
+	}	
 
 	this.success = function(callback){
 		this.postIt(callback);
