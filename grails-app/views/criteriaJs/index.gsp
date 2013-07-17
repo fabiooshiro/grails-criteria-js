@@ -186,6 +186,23 @@
 				});
 			});
 
+			it("should filter by date", function(){
+				step("call server desc", function(done){
+					new Criteria('Music')
+						.ge('date', "2013-01-04")
+						.le('date', "2013-01-05")
+						.order('date', 'asc')
+						.success(function(response){
+							expect(response[0].class).toBe("criteria.js.Music");
+							expect(response[0].name).toBe("Idioteque");
+							expect(response[1].class).toBe("criteria.js.Music");
+							expect(response[1].name).toBe("OK Computer");
+							done();
+						})
+					;
+				});
+			});
+
 		});
 		
 	</script>

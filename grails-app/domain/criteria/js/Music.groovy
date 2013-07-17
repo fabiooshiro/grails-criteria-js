@@ -8,6 +8,8 @@ class Music {
 
 	BigDecimal time
 
+	Date date
+
     static constraints = {
     	name nullable: true
     }

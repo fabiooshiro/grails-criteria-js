@@ -85,4 +85,30 @@ class CriteriaJsControllerSpec extends Specification{
 			def artist = JSON.parse(jsonStr)
 			1 == belaBartok.id
 	}
+
+	def "should convert date string by pattern"(){
+		given: "a music list"
+			new Music(date: new Date('2013/05/04')).save(validate: false)
+			new Music(date: new Date('2013/05/05')).save(validate: false)
+			new Music(date: new Date('2013/05/05')).save(validate: false)
+			new Music(date: new Date('2013/05/06')).save(validate: false)
+		and: "a criteria request"
+			request.JSON = [
+				clazz: 'Music',
+				criteria: [
+					[
+						type: 'method',
+						name: 'eq',
+						args: ['date', '2013-05-05']
+					]
+				]
+			]
+		when: "call the server"
+			controller.list()
+		then:
+			def jsonStr = controller.response.contentAsString
+			assert jsonStr
+			def ls = JSON.parse(jsonStr)
+			ls.size() == 2
+	}
 }
