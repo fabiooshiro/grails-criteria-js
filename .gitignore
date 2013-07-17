@@ -11,6 +11,6 @@
 /target-eclipse
 /.idea
 *.log
-/web-app/WEB-INF/
+#/web-app/WEB-INF/
 plugin.xml
 *.zip
