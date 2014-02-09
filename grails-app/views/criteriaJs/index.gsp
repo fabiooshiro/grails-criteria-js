@@ -203,6 +203,23 @@
 				});
 			});
 
+			it("should filter name in list", function(){
+				step("call server", function(done){
+					new Criteria('Music')
+						.in('name', ["OK Computer", "Idioteque"])
+						.order('name', 'asc')
+						.success(function(response){
+							expect(response.length).toBe(2);
+							expect(response[0].class).toBe("criteria.js.Music");
+							expect(response[0].name).toBe("Idioteque");
+							expect(response[1].class).toBe("criteria.js.Music");
+							expect(response[1].name).toBe("OK Computer");
+							done();
+						})
+					;
+				});
+			});
+
 		});
 		
 	</script>

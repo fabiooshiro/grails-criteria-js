@@ -44,33 +44,38 @@ function Criteria(clazz){
 
 	this.eq = function(prop, val){
 		params.criteria.push({type: 'method', name: 'eq', args: [prop, val]});
-		return self;	
+		return self;
 	};
 
 	this.ne = function(prop, val){
 		params.criteria.push({type: 'method', name: 'ne', args: [prop, val]});
-		return self;	
+		return self;
 	};
 
 	this.gt = function(prop, val){
 		params.criteria.push({type: 'method', name: 'gt', args: [prop, val]});
-		return self;	
+		return self;
 	};
 
 	this.ge = function(prop, val){
 		params.criteria.push({type: 'method', name: 'ge', args: [prop, val]});
-		return self;	
+		return self;
 	};
 
 	this.le = function(prop, val){
 		params.criteria.push({type: 'method', name: 'le', args: [prop, val]});
-		return self;	
+		return self;
 	};
 
 	this.lt = function(prop, val){
 		params.criteria.push({type: 'method', name: 'lt', args: [prop, val]});
-		return self;	
+		return self;
 	};
+
+	this.in = function(prop, val){
+		params.criteria.push({type: 'method', name: 'in', args: [prop, val]});
+		return self;
+	}
 
 	this.order = function(prop, val){
 		params.criteria.push({type: 'method', name: 'order', args: [prop, val]});
