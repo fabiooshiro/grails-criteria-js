@@ -160,6 +160,11 @@ function Criteria(clazz){
 		return self;
 	};
 
+	this.not = function(subCrit){
+		self.attr('not', subCrit);
+		return self;
+	};
+
 	this.projections = function(subCrit){
 		self.attr('projections', subCrit);
 		return self;

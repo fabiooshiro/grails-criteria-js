@@ -220,6 +220,27 @@
 				});
 			});
 
+			it("should filter by name not like", function(){
+				step("call server", function(done){
+					new Criteria('Music')
+						.not(function(not){
+							not.in('name', ["OK Computer", "Idioteque"])
+						})
+						.order('name', 'asc')
+						.success(function(response){
+							expect(response.length).toBe(3);
+							expect(response[0].class).toBe("criteria.js.Music");
+							expect(response[0].name).toBe("A");
+							expect(response[1].class).toBe("criteria.js.Music");
+							expect(response[1].name).toBe("B");
+							expect(response[2].class).toBe("criteria.js.Music");
+							expect(response[2].name).toBe("C");
+							done();
+						})
+					;
+				});
+			});
+
 		});
 		
 	</script>

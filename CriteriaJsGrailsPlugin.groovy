@@ -1,5 +1,5 @@
 class CriteriaJsGrailsPlugin {
-    def version = "0.5"
+    def version = "0.5.1"
     def grailsVersion = "2.0 > *"
     def pluginExcludes = [
         'grails-app/domain/**',
@@ -11,7 +11,7 @@ class CriteriaJsGrailsPlugin {
     def authorEmail = ""
     def description = 'GORM criteria for javascript'
 
-    def documentation = "http://grails.org/plugin/criteria-js"
+    def documentation = "https://github.com/fabiooshiro/grails-criteria-js"
 
     def license = "APACHE"
     def organization = [name: "Investtools", url: "http://www.investtools.com.br/"]
