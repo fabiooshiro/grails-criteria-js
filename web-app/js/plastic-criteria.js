@@ -189,6 +189,13 @@
 			for (var i = 0; i < list.length; i++) if (list[i][prop] < res) res = list[i][prop];
 			return res;
 		},
+		avg: function(list, prop) {
+			var res = 0.0;
+			for (var i = 0; i < list.length; i++) {
+				res += list[i][prop] || 0.0;
+			}
+			return res / list.length;
+		},
 		groupProperty: function(list, prop) {
 			return list[0][prop];
 		}

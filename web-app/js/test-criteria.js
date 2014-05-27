@@ -57,6 +57,19 @@ describe("criteria js", function() {
 		;
 	});
 
+	it("should avg", function(done) {
+		new Criteria('Music')
+			.projections(function(p) {
+				p.avg('time');
+			})
+			.success(function(response) {
+				expect(response.length).toEqual(1);
+				expect(response[0]).toBeCloseTo(26.12, 2);
+				done();
+			})
+		;
+	});
+
 	it("should filter time > 3", function(done) {
 		new Criteria('Music')
 			.gt('time', new BigDecimal(3))
