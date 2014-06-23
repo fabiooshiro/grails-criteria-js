@@ -16,7 +16,7 @@ function LocalDate(val) {
 var FetchMode = {
 	JOIN: {class: 'criteria.js.FetchMode', id: 'JOIN'},
 	EAGER: {class: 'criteria.js.FetchMode', id: 'EAGER'}
-}
+};
 
 var Criteria = function(clazz) {
 	var url = config.contextPath + '/criteriaJs/list';
@@ -40,7 +40,7 @@ var Criteria = function(clazz) {
 	this.ilike = function(prop, val) {
 		params.criteria.push({type: 'method', name: 'ilike', args: [prop, val]});
 		return self;
-	}
+	};
 
 	this.eq = function(prop, val) {
 		params.criteria.push({type: 'method', name: 'eq', args: [prop, val]});
@@ -75,7 +75,7 @@ var Criteria = function(clazz) {
 	this.in = function(prop, val) {
 		params.criteria.push({type: 'method', name: 'in', args: [prop, val]});
 		return self;
-	}
+	};
 
 	this.order = function(prop, val) {
 		params.criteria.push({type: 'method', name: 'order', args: [prop, val]});
@@ -128,7 +128,7 @@ var Criteria = function(clazz) {
 		}else{
 			params.criteria.push({type: 'method', name: method, args: [prop]});	
 		}
-	};
+	}
 
 	this.sum = function(prop, alias) {
 		push2args('sum', prop, alias);
@@ -172,7 +172,7 @@ var Criteria = function(clazz) {
 
 	function defaults(name, subCrit, jsFunc) {
 		var subParams = {type: 'closure', name: name, itens: [], jsFunc: (jsFunc || name)};
-		params.criteria.push(subParams)
+		params.criteria.push(subParams);
 		var crit = new Criteria();
 		subCrit(crit);
 		subParams.itens = crit.getParams().criteria;
@@ -185,30 +185,34 @@ var Criteria = function(clazz) {
 
 	this.postIt = function(callback) {
 		$.ajax(url + '/' + clazz, {
-    		data: JSON.stringify(params),
-    		contentType : 'application/json',
-    		type : 'POST',
-    		success: callback
-    	});
-	}
-
-	this.list = function(callback) {
-		this.postIt(callback);
-	}
+            data: JSON.stringify(params),
+            contentType : 'application/json',
+            type : 'POST',
+            success: callback
+        });
+	};
 
 	this.get = function(id, callback) {
 		params.id = id;
-		$.ajax(config.contextPath + '/criteriaJs/get', {
-    		data: JSON.stringify(params),
-    		contentType : 'application/json',
-    		type : 'POST',
-    		success: callback
-    	});
-	}	
+        $.ajax(config.contextPath + '/criteriaJs/get', {
+            data: JSON.stringify(params),
+            contentType : 'application/json',
+            type : 'POST',
+            success: callback
+        });
+	};
 
-}
+	this.createAlias = function(prop, alias) {
+        push2args('createAlias', prop, alias);
+        return self;
+	};
+
+};
 
 Criteria.prototype.success = function(callback) {
 	this.postIt(callback);
-}
+};
 
+Criteria.prototype.list = function(callback) {
+	this.postIt(callback);
+};

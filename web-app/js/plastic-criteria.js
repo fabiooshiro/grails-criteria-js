@@ -7,8 +7,8 @@
 	Criteria.addData = function(domainName, items) {
 		var list = domainData[domainName] || [];
 		for (var i = 0; i < items.length; i++) {
-			list.push(items[i])
-		};
+			list.push(items[i]);
+		}
 		domainData[domainName] = list;
 	};
 
@@ -23,15 +23,15 @@
 		ne: function() { return _instanceValue != _criteriaValue },
 		ilike: function() { return ('' + _instanceValue).toLowerCase().match(_criteriaValue.replace('%','.*').toLowerCase()) },
 		like: function() { return ('' + _instanceValue).match(_criteriaValue.replace('%','.*')) },
-		isNull: function() { return _instanceValue == null },
-		isNotNull: function() { return _instanceValue != null },
+		isNull: function() { return _instanceValue === null },
+		isNotNull: function() { return _instanceValue !== null },
 		eqProperty: function() { return _instanceValue == _criteriaValue },
 		geProperty: function() { return _instanceValue >= _criteriaValue },
 		leProperty: function() { return _instanceValue <= _criteriaValue},
 		neProperty: function() { return _instanceValue != _criteriaValue },
 		gtProperty: function() { return _instanceValue > _criteriaValue },
 		ltProperty: function() { return _instanceValue < _criteriaValue }
-	}
+	};
 
 	function extractVal(obj) {
 		if (obj && (obj['class'] == 'java.lang.Long' || obj['class'] == 'java.math.BigDecimal' || obj['class'] == 'org.joda.time.LocalDate')) {
@@ -47,14 +47,15 @@
 			_criteriaValue = extractVal(cri.args[1]);
 		}
 		_instanceValue = _getProp(obj, cri.args[0]);
-		_critOptions = cri.opt;
+		//_critOptions = cri.opt;
 		var method = theImplementations[cri.name];
 		if (!method) {
 			console.log("Sem metodo", cri.name);
 		}
 		var result = method();
+		// console.log('    ', cri.name, _criteriaValue, '==', _instanceValue, result);
 		//_SaintPeter.tell("    ${cri.criteriaName}('${_instanceValue}', '${_criteriaValue}') == ${result}")
-		return result
+		return result;
 	}
 
 	function isAndOrNot(name) {
@@ -101,21 +102,21 @@
 	function __getProperty(obj, propertyName) {
 		var res = obj;
 		var currentPath = [];
-		var arr = propertyName.split('\.');
+		var arr = propertyName.split('.');
 		for (var i = 0; i < arr.length; i++) {
 			currentPath.push(arr[i]);
-			if (res == null) return null;
+			if (res === null) return null;
 			try {
 				res = res[arr[i]];
 			} catch(e) {
-				res = res[_propertyAlias[currentPath.join('.')]]
+				res = res[_propertyAlias[currentPath.join('.')]];
 			}
 		}
-		return res
+		return res;
 	}
 
 	function _getProp(obj, propertyName) {
-		var res
+		var res;
 		if (Array.isArray(propertyName)) {
 			res = [];
 			for (var i = 0; i < propertyName.length; i++) {
@@ -128,7 +129,7 @@
 	}
 
 	function _filteredList(params) {
-		var r = []
+		var r = [];
 		var list = domainData[params.clazz] || [];
 		var _leCriticalList = [];
 		if (params.criteria.length > 0) {
@@ -153,22 +154,7 @@
 				// _SaintPeter.tell "    sorry"
 			}
 		}
-		return r
-	}
-
-	function filter(list, params) {
-		var filtered = [];
-		for (var i = 0; i < list.length; i++) {
-			var ok = true;
-			var obj = list[i];
-			if (!checkCriteria(obj, params.criteria)) {
-				ok = false;
-			}
-			if (ok) {
-				filtered.push(obj);
-			}
-		}
-		return filtered;
+		return r;
 	}
 
 	var love = {
@@ -199,7 +185,7 @@
 		groupProperty: function(list, prop) {
 			return list[0][prop];
 		}
-	}
+	};
 
 	function findProjections(params) {
 		for (var j = 0; j < params.criteria.length; j++) {
@@ -263,7 +249,7 @@
 			}
 		}
 		return groups;
-	}
+	};
 
 	var mkKey = function(item, props) {
 		var rs = [];
@@ -271,7 +257,7 @@
 			rs.push(item[props[i]]);
 		}
 		return JSON.stringify(rs);
-	}
+	};
 
 	function sortList(resultList, params) {
 		var _order = [];
@@ -297,7 +283,7 @@
 						return -1;
 					}
 				}
-			};
+			}
 			return 0;
 		});
 	}
@@ -315,7 +301,7 @@
 				criteria[i].args[0] = prefix + prop;
 				flat.push(criteria[i]);
 			}
-		};
+		}
 		return flat;
 	}
 
@@ -334,11 +320,14 @@
 		return flat;
 	}
 
-	Criteria.prototype.success = function(callback) {
-		this.getParams().criteria = flatAttr(this.getParams().criteria);
+    function success(callback) {
+        this.getParams().criteria = flatAttr(this.getParams().criteria);
 		var filtered = _filteredList(this.getParams());
 		var sorted = sortList(filtered, this.getParams());
 		var groups = groupResults(filtered, this.getParams());
 		callback(groups);
-	}
+    }
+    
+	Criteria.prototype.success = success;
+	Criteria.prototype.list = success;
 })();
