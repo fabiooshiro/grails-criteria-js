@@ -1,15 +1,13 @@
 
 (function() {
 
-	var domainData = {};
-
-	Criteria.data = domainData;
+	Criteria.data = {};
 	Criteria.addData = function(domainName, items) {
-		var list = domainData[domainName] || [];
+		var list = Criteria.data[domainName] || [];
 		for (var i = 0; i < items.length; i++) {
 			list.push(items[i]);
 		}
-		domainData[domainName] = list;
+		Criteria.data[domainName] = list;
 	};
 
 	var _criteriaValue, _instanceValue;
@@ -53,7 +51,7 @@
 			console.log("Sem metodo", cri.name);
 		}
 		var result = method();
-		// console.log('    ', cri.name, _criteriaValue, '==', _instanceValue, result);
+		console.log('    ', cri.name, cri.args[0], _criteriaValue, '==', _instanceValue, result);
 		//_SaintPeter.tell("    ${cri.criteriaName}('${_instanceValue}', '${_criteriaValue}') == ${result}")
 		return result;
 	}
@@ -99,18 +97,17 @@
 		return gotoParadise;
 	}
 
+    var _propertyAlias = {};
+    
 	function __getProperty(obj, propertyName) {
 		var res = obj;
 		var currentPath = [];
 		var arr = propertyName.split('.');
 		for (var i = 0; i < arr.length; i++) {
-			currentPath.push(arr[i]);
-			if (res === null) return null;
-			try {
-				res = res[arr[i]];
-			} catch(e) {
-				res = res[_propertyAlias[currentPath.join('.')]];
-			}
+            var propName = _propertyAlias[arr[i]] || arr[i];
+			currentPath.push(propName);
+			if (res === null || typeof res === 'undefined') return null;
+			res = res[propName];
 		}
 		return res;
 	}
@@ -130,7 +127,7 @@
 
 	function _filteredList(params) {
 		var r = [];
-		var list = domainData[params.clazz] || [];
+		var list = Criteria.data[params.clazz] || [];
 		var _leCriticalList = [];
 		if (params.criteria.length > 0) {
 			if (params.criteria[0].jsFunc !== 'and') {
@@ -143,15 +140,15 @@
 				_leCriticalList = params.criteria[0];
 			}
 		}
-		//if (list.length == 0) _SaintPeter.tell "Hey the ${_clazz.simpleName}.list() is empty!";
+		if (!list || list.length === 0) console.log("Hey the", params.clazz , "is empty!");
 		for (var i = 0; i < list.length; i++) {
 			var obj = list[i];
-			//_SaintPeter.tell obj
+			console.log("  checking", obj);
 			if (knokinOnHeavensDoor(_leCriticalList, obj)) {
 				r.push(obj);
-				// _SaintPeter.tell "    welcome to heaven"
+				console.log("    welcome to heaven (pass criteria)");
 			} else {
-				// _SaintPeter.tell "    sorry"
+                console.log("    sorry");
 			}
 		}
 		return r;
@@ -183,7 +180,10 @@
 			return res / list.length;
 		},
 		groupProperty: function(list, prop) {
-			return list[0][prop];
+			return _getProp(list[0], prop);
+		},
+		property: function(list, prop) {
+            return _getProp(list[0], prop);
 		}
 	};
 
@@ -200,9 +200,14 @@
 	function extractProps(list, projections) {
 		var item = [];
 		for (var i = 0; i < projections.length; i++) {
-			var crit = projections[i];
-			var arr = love[crit.name](list, crit.args[0]);
-			item.push(arr);
+            try {
+                var crit = projections[i];
+                var arr = love[crit.name](list, crit.args[0]);
+                item.push(arr);
+            } catch(e) {
+                console.log(crit.name, crit.args[0], e);
+                throw e;
+            }
 		}
 		return item;
 	}
@@ -211,7 +216,7 @@
 		var groups = [];
 		for (var i = 0; i < projections.length; i++) {
 			var crit = projections[i];
-			if (crit.name == 'groupProperty') {
+			if (crit.name == 'groupProperty' || crit.name == 'property') {
 				groups.push(crit.args[0]);
 			}
 		}
@@ -254,7 +259,7 @@
 	var mkKey = function(item, props) {
 		var rs = [];
 		for (var i = props.length - 1; i >= 0; i--) {
-			rs.push(item[props[i]]);
+            rs.push(_getProp(item, props[i]));
 		}
 		return JSON.stringify(rs);
 	};
@@ -289,13 +294,16 @@
 	}
 
 	function subFlatAttr(prefix, criteria) {
-		var flat = [];
+		var flat = [], arr, j;
 		for (var i = 0; i < criteria.length; i++) {
 			if (criteria[i].jsFunc == 'attr') {
-				var arr = subFlatAttr(criteria[i].name + '.', criteria[i].itens);
-				for (var j = 0; j < arr.length; j++) {
+				arr = subFlatAttr(criteria[i].name + '.', criteria[i].itens);
+				for (j = 0; j < arr.length; j++) {
 					flat.push(arr[j]);
 				}
+			} else if (criteria[i].jsFunc == 'or') {
+                criteria[i].itens = subFlatAttr(prefix, criteria[i].itens);
+                flat.push(criteria[i]);
 			} else {
 				var prop = criteria[i].args[0];
 				criteria[i].args[0] = prefix + prop;
@@ -313,6 +321,8 @@
 				for (var j = 0; j < arr.length; j++) {
 					flat.push(arr[j]);
 				}
+			} else if (criteria[i].name == 'createAlias' && criteria[i].type == 'method') {
+                _propertyAlias[criteria[i].args[1]] = criteria[i].args[0];
 			} else {
 				flat.push(criteria[i]);
 			}
@@ -324,7 +334,7 @@
         this.getParams().criteria = flatAttr(this.getParams().criteria);
 		var filtered = _filteredList(this.getParams());
 		var sorted = sortList(filtered, this.getParams());
-		var groups = groupResults(filtered, this.getParams());
+		var groups = groupResults(sorted, this.getParams());
 		callback(groups);
     }
     
