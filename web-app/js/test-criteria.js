@@ -177,7 +177,7 @@ describe("criteria js", function() {
 	it("should filter by name not in", function(done) {
 		new Criteria('Music')
 			.not(function(not) {
-				not.in('name', ["OK Computer", "Idioteque"])
+				not.in('name', ["OK Computer", "Idioteque"]);
 			})
 			.order('name', 'asc')
 			.success(function(response){
@@ -196,8 +196,8 @@ describe("criteria js", function() {
 	it("should returns musics with name 'Ok Computer' or 'Idioteque'", function(done) {
 		new Criteria('Music')
 			.or(function(or) {
-				or.eq('name', "OK Computer")
-				or.eq('name', "Idioteque")
+				or.eq('name', "OK Computer");
+				or.eq('name', "Idioteque");
 			})
 			.order('name', 'asc')
 			.success(function(response){

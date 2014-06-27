@@ -2,14 +2,8 @@
 (function() {
 
 	Criteria.data = {};
-	Criteria.addData = function(domainName, items) {
-		var list = Criteria.data[domainName] || [];
-		for (var i = 0; i < items.length; i++) {
-			list.push(items[i]);
-		}
-		Criteria.data[domainName] = list;
-	};
-
+    Criteria.print = false;
+    
 	var _criteriaValue, _instanceValue;
 	var theImplementations = {
 		le: function() { return _instanceValue <= _criteriaValue },
@@ -51,7 +45,7 @@
 			console.log("Sem metodo", cri.name);
 		}
 		var result = method();
-		console.log('    ', cri.name, cri.args[0], _criteriaValue, '==', _instanceValue, result);
+		if (Criteria.print) console.log('    ', cri.name, cri.args[0], _criteriaValue, '==', _instanceValue, result);
 		//_SaintPeter.tell("    ${cri.criteriaName}('${_instanceValue}', '${_criteriaValue}') == ${result}")
 		return result;
 	}
@@ -143,12 +137,13 @@
 		if (!list || list.length === 0) console.log("Hey the", params.clazz , "is empty!");
 		for (var i = 0; i < list.length; i++) {
 			var obj = list[i];
-			console.log("  checking", obj);
+			if (Criteria.print) console.log("  checking", obj);
+			if (params.clazz === 'AccountingEntry') console.log(_leCriticalList);
 			if (knokinOnHeavensDoor(_leCriticalList, obj)) {
 				r.push(obj);
-				console.log("    welcome to heaven (pass criteria)");
+				if (Criteria.print) console.log("    welcome to heaven (pass criteria)");
 			} else {
-                console.log("    sorry");
+                if (Criteria.print) console.log("    sorry");
 			}
 		}
 		return r;
@@ -297,7 +292,7 @@
 		var flat = [], arr, j;
 		for (var i = 0; i < criteria.length; i++) {
 			if (criteria[i].jsFunc == 'attr') {
-				arr = subFlatAttr(criteria[i].name + '.', criteria[i].itens);
+				arr = subFlatAttr(prefix + criteria[i].name + '.', criteria[i].itens);
 				for (j = 0; j < arr.length; j++) {
 					flat.push(arr[j]);
 				}
