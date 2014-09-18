@@ -13,9 +13,9 @@
 		ge: function() { return _instanceValue >= _criteriaValue },
 		in: function() { return _criteriaValue.indexOf(_instanceValue) !==-1 },
 		ne: function() { return _instanceValue != _criteriaValue },
-		ilike: function() { return ('' + _instanceValue).toLowerCase().match(_criteriaValue.replace('%','.*').toLowerCase()) },
-		like: function() { return ('' + _instanceValue).match(_criteriaValue.replace('%','.*')) },
-		isNull: function() { return _instanceValue === null },
+		ilike: function() { return ('' + _instanceValue).toLowerCase().match(_criteriaValue.replace(/%/g,'.*').toLowerCase()) !== null },
+		like: function() { return ('' + _instanceValue).match(_criteriaValue.replace(/%/g,'.*')) !== null },
+		isNull: function() { return typeof _instanceValue === 'undefined' || _instanceValue === null },
 		isNotNull: function() { return _instanceValue !== null },
 		eqProperty: function() { return _instanceValue == _criteriaValue },
 		geProperty: function() { return _instanceValue >= _criteriaValue },
@@ -45,7 +45,7 @@
 			console.log("Sem metodo", cri.name);
 		}
 		var result = method();
-		if (Criteria.print) console.log('    ', cri.name, cri.args[0], _criteriaValue, '==', _instanceValue, result);
+		if (Criteria.print) console.log('    ', cri.name, cri.args[0], _instanceValue, ', ', _criteriaValue, result);
 		//_SaintPeter.tell("    ${cri.criteriaName}('${_instanceValue}', '${_criteriaValue}') == ${result}")
 		return result;
 	}
@@ -134,7 +134,7 @@
 				_leCriticalList = params.criteria[0];
 			}
 		}
-		if (!list || list.length === 0) console.log("Hey the", params.clazz , "is empty!");
+		if (Criteria.print && (!list || list.length === 0)) console.log("Hey the", params.clazz , "is empty!");
 		for (var i = 0; i < list.length; i++) {
 			var obj = list[i];
 			if (Criteria.print) console.log("  checking", obj);
