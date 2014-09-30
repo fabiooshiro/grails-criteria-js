@@ -1,6 +1,7 @@
 package criteria.js
 
 import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 class CriteriaJsController {
 
@@ -68,10 +69,9 @@ class CriteriaJsController {
 		__getProp(obj, property)
 	}
 
-	private _getProp(Collection obj, Object property) {
+	private _getProp(obj, JSONObject property) {
 		__getProp(obj[property.index], property['property'])
 	}
-	
 
 	def list() {
 		def json = request.JSON

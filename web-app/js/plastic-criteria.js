@@ -2,8 +2,8 @@
 (function() {
 
 	Criteria.data = {};
-    Criteria.print = false;
-    
+	Criteria.print = false;
+	
 	var _criteriaValue, _instanceValue;
 	var theImplementations = {
 		le: function() { return _instanceValue <= _criteriaValue },
@@ -91,15 +91,13 @@
 		return gotoParadise;
 	}
 
-    var _propertyAlias = {};
-    
+	var _propertyAlias = {};
+	
 	function __getProperty(obj, propertyName) {
 		var res = obj;
-		var currentPath = [];
 		var arr = propertyName.split('.');
 		for (var i = 0; i < arr.length; i++) {
-            var propName = _propertyAlias[arr[i]] || arr[i];
-			currentPath.push(propName);
+			var propName = _propertyAlias[arr[i]] || arr[i];
 			if (res === null || typeof res === 'undefined') return null;
 			res = res[propName];
 		}
@@ -139,11 +137,11 @@
 			var obj = list[i];
 			if (Criteria.print) console.log("  checking", obj);
 			if (params.clazz === 'AccountingEntry') console.log(_leCriticalList);
-			if (knokinOnHeavensDoor(_leCriticalList, obj)) {
+			if (_leCriticalList.length === 0 || knokinOnHeavensDoor(_leCriticalList, obj)) {
 				r.push(obj);
 				if (Criteria.print) console.log("    welcome to heaven (pass criteria)");
 			} else {
-                if (Criteria.print) console.log("    sorry");
+				if (Criteria.print) console.log("    sorry");
 			}
 		}
 		return r;
@@ -178,7 +176,7 @@
 			return _getProp(list[0], prop);
 		},
 		property: function(list, prop) {
-            return _getProp(list[0], prop);
+			return _getProp(list[0], prop);
 		}
 	};
 
@@ -195,14 +193,14 @@
 	function extractProps(list, projections) {
 		var item = [];
 		for (var i = 0; i < projections.length; i++) {
-            try {
-                var crit = projections[i];
-                var arr = love[crit.name](list, crit.args[0]);
-                item.push(arr);
-            } catch(e) {
-                console.log(crit.name, crit.args[0], e);
-                throw e;
-            }
+			try {
+				var crit = projections[i];
+				var arr = love[crit.name](list, crit.args[0]);
+				item.push(arr);
+			} catch(e) {
+				console.log(crit.name, crit.args[0], e);
+				throw e;
+			}
 		}
 		return item;
 	}
@@ -254,7 +252,7 @@
 	var mkKey = function(item, props) {
 		var rs = [];
 		for (var i = props.length - 1; i >= 0; i--) {
-            rs.push(_getProp(item, props[i]));
+			rs.push(_getProp(item, props[i]));
 		}
 		return JSON.stringify(rs);
 	};
@@ -297,8 +295,8 @@
 					flat.push(arr[j]);
 				}
 			} else if (criteria[i].jsFunc == 'or') {
-                criteria[i].itens = subFlatAttr(prefix, criteria[i].itens);
-                flat.push(criteria[i]);
+				criteria[i].itens = subFlatAttr(prefix, criteria[i].itens);
+				flat.push(criteria[i]);
 			} else {
 				var prop = criteria[i].args[0];
 				criteria[i].args[0] = prefix + prop;
@@ -317,7 +315,7 @@
 					flat.push(arr[j]);
 				}
 			} else if (criteria[i].name == 'createAlias' && criteria[i].type == 'method') {
-                _propertyAlias[criteria[i].args[1]] = criteria[i].args[0];
+				_propertyAlias[criteria[i].args[1]] = criteria[i].args[0];
 			} else {
 				flat.push(criteria[i]);
 			}
@@ -325,14 +323,41 @@
 		return flat;
 	}
 
-    function success(callback) {
-        this.getParams().criteria = flatAttr(this.getParams().criteria);
+	function leanJson(groups, lean) {
+		var results = [];
+		for (var i = 0; i < groups.length; i++) {
+			var item = groups[i];
+			console.log(item);
+			var leanItem = {};
+			for(var k in lean) {
+				var prop = lean[k];
+				if (typeof prop === 'number') {
+					leanItem[k] = item[prop];
+				} else if (typeof prop === 'string') {
+					console.log(prop);
+					leanItem[k] = _getProp(item, prop);
+				} else if (typeof prop === 'object') {
+					leanItem[k] = _getProp(item[prop.index], prop.property);
+				}
+				console.log(leanItem);
+			}
+			results.push(leanItem);
+		}
+		console.log(results);
+		return results;
+	}
+
+	function success(callback) {
+		this.getParams().criteria = flatAttr(this.getParams().criteria);
 		var filtered = _filteredList(this.getParams());
 		var sorted = sortList(filtered, this.getParams());
 		var groups = groupResults(sorted, this.getParams());
+		if (this.getParams().leanJson) {
+			groups = leanJson(groups, this.getParams().leanJson);
+		}
 		callback(groups);
-    }
-    
+	}
+	
 	Criteria.prototype.success = success;
 	Criteria.prototype.list = success;
 })();
