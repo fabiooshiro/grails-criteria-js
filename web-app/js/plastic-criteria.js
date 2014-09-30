@@ -327,7 +327,6 @@
 		var results = [];
 		for (var i = 0; i < groups.length; i++) {
 			var item = groups[i];
-			console.log(item);
 			var leanItem = {};
 			for(var k in lean) {
 				var prop = lean[k];
@@ -339,11 +338,9 @@
 				} else if (typeof prop === 'object') {
 					leanItem[k] = _getProp(item[prop.index], prop.property);
 				}
-				console.log(leanItem);
 			}
 			results.push(leanItem);
 		}
-		console.log(results);
 		return results;
 	}
 
