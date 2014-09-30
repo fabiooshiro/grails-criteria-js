@@ -47,11 +47,50 @@ class CriteriaJsController {
 		clazz
 	}
 
+	private __getProperty(obj, propertyName){
+		def res = obj
+		def currentPath = []
+		propertyName.split('\\.').each {
+			currentPath << it
+			if (res == null) return
+			if (it == 'class') {
+				res = res.class.name
+			} else {
+				res = res."$it"
+			}
+		}
+		return res
+	}
+
+	private _getProp(obj, propertyName){
+		def res
+		if(propertyName instanceof List){
+			res = propertyName.collect{ pname ->
+				__getProperty(obj, pname)
+			}
+		} else {
+			res = __getProperty(obj, propertyName)
+		}
+		return res
+	}
+
 	def list() {
 		def json = request.JSON
 		def clazz = getClazz(json.clazz)
 		def ls = clazz.withCriteria(createClosure(json.criteria))
-		render ls as JSON
+		if (json.leanJson) {
+			def handled = []
+			ls.each { dbObj ->
+				def jsonObj = [:]
+				json.leanJson.each { k, v ->
+					jsonObj[k] = _getProp(dbObj, v)
+				}
+				handled << jsonObj
+			}
+			render handled as JSON
+		} else {
+			render ls as JSON
+		}
 	}
 
 	def get() {

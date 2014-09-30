@@ -111,4 +111,29 @@ class CriteriaJsControllerSpec extends Specification{
 			def ls = JSON.parse(jsonStr)
 			ls.size() == 2
 	}
+
+	def "should use json parser params"() {
+		given: "a music list"
+			def belaBartok = new Artist(name: 'Béla Bartók').save(validate: false)
+			def album1 = new Album(artist: belaBartok, year: 2010).save(validate: false)
+			def album2 = new Album(artist: belaBartok, year: 2014).save(validate: false)
+			new Music(album: album1).save(validate: false)
+			new Music(album: album2).save(validate: false)
+		and: "a criteria request"
+		request.JSON = [
+			clazz: 'Music',
+			criteria: [],
+			leanJson: [
+				"year": 'album.year'
+			]
+		]
+		when: "call the server"
+			controller.list()
+		then:
+			def jsonStr = controller.response.contentAsString
+			assert jsonStr
+			def ls = JSON.parse(jsonStr)
+			2010 == ls[0].year
+			2014 == ls[1].year
+	}
 }
