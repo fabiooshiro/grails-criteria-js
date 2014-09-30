@@ -1,5 +1,5 @@
 class CriteriaJsGrailsPlugin {
-    def version = "0.8"
+    def version = "0.8.1"
     def grailsVersion = "2.0 > *"
     def pluginExcludes = [
         'grails-app/domain/**',
