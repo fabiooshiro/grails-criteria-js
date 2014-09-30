@@ -47,11 +47,9 @@ class CriteriaJsController {
 		clazz
 	}
 
-	private __getProperty(obj, propertyName){
+	private __getProp(obj, propertyName) {
 		def res = obj
-		def currentPath = []
 		propertyName.split('\\.').each {
-			currentPath << it
 			if (res == null) return
 			if (it == 'class') {
 				res = res.class.name
@@ -62,17 +60,18 @@ class CriteriaJsController {
 		return res
 	}
 
-	private _getProp(obj, propertyName){
-		def res
-		if(propertyName instanceof List){
-			res = propertyName.collect{ pname ->
-				__getProperty(obj, pname)
-			}
-		} else {
-			res = __getProperty(obj, propertyName)
-		}
-		return res
+	private _getProp(obj, Integer index) {
+		obj[index]
 	}
+	
+	private _getProp(obj, String property) {
+		__getProp(obj, property)
+	}
+
+	private _getProp(Collection obj, Object property) {
+		__getProp(obj[property.index], property['property'])
+	}
+	
 
 	def list() {
 		def json = request.JSON

@@ -10,7 +10,7 @@ function Long(val) {
 
 function LocalDate(val) {
 	this.class = 'org.joda.time.LocalDate';
-	this.value = val;	
+	this.value = val;
 }
 
 var FetchMode = {
@@ -124,9 +124,9 @@ var Criteria = function(clazz) {
 
 	function push2args(method, prop, arg) {
 		if(arg){
-			params.criteria.push({type: 'method', name: method, args: [prop, arg]});	
+			params.criteria.push({type: 'method', name: method, args: [prop, arg]});
 		}else{
-			params.criteria.push({type: 'method', name: method, args: [prop]});	
+			params.criteria.push({type: 'method', name: method, args: [prop]});
 		}
 	}
 
@@ -185,28 +185,32 @@ var Criteria = function(clazz) {
 
 	this.postIt = function(callback) {
 		$.ajax(url + '/' + clazz, {
-            data: JSON.stringify(params),
-            contentType : 'application/json',
-            type : 'POST',
-            success: callback
-        });
+			data: JSON.stringify(params),
+			contentType : 'application/json',
+			type : 'POST',
+			success: callback
+		});
 	};
 
 	this.get = function(id, callback) {
 		params.id = id;
-        $.ajax(config.contextPath + '/criteriaJs/get', {
-            data: JSON.stringify(params),
-            contentType : 'application/json',
-            type : 'POST',
-            success: callback
-        });
+		$.ajax(config.contextPath + '/criteriaJs/get', {
+			data: JSON.stringify(params),
+			contentType : 'application/json',
+			type : 'POST',
+			success: callback
+		});
 	};
 
 	this.createAlias = function(prop, alias) {
-        push2args('createAlias', prop, alias);
-        return self;
+		push2args('createAlias', prop, alias);
+		return self;
 	};
 
+	this.leanJson = function(opts) {
+		params.leanJson = opts;
+		return self;
+	};
 };
 
 Criteria.prototype.success = function(callback) {

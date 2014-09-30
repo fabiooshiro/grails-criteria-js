@@ -112,7 +112,7 @@ class CriteriaJsControllerSpec extends Specification{
 			ls.size() == 2
 	}
 
-	def "should use json parser params"() {
+	def "should make json lean"() {
 		given: "a music list"
 			def belaBartok = new Artist(name: 'Béla Bartók').save(validate: false)
 			def album1 = new Album(artist: belaBartok, year: 2010).save(validate: false)
@@ -136,4 +136,30 @@ class CriteriaJsControllerSpec extends Specification{
 			2010 == ls[0].year
 			2014 == ls[1].year
 	}
+
+	def "should make json lean, prop null"() {
+		given: "a music list"
+			def belaBartok = new Artist(name: 'Béla Bartók').save(validate: false)
+			def album1 = new Album(artist: belaBartok, year: 2010).save(validate: false)
+			def album2 = new Album(artist: belaBartok, year: 2014).save(validate: false)
+			new Music(album: album1).save(validate: false)
+			new Music().save(validate: false)
+		and: "a criteria request"
+		request.JSON = [
+			clazz: 'Music',
+			criteria: [],
+			leanJson: [
+				"year": 'album.year'
+			]
+		]
+		when: "call the server"
+			controller.list()
+		then:
+			def jsonStr = controller.response.contentAsString
+			assert jsonStr
+			def ls = JSON.parse(jsonStr)
+			2010 == ls[0].year
+			assert ls[1].isNull('year')
+	}
+
 }

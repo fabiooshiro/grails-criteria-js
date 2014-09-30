@@ -211,4 +211,42 @@ describe("criteria js", function() {
 		;
 	});
 
+	it("should returns lean json", function(done) {
+		new Criteria('Music')
+			.leanJson({
+				artist: 'album.artist.name',
+				music: 'name'
+			})
+			.success(function(response) {
+				expect(response.length).toBe(5);
+				expect(response[0].artist).toBe('Béla Bartók');
+				expect(response[0].music).toBe('A');
+				expect(response[1].artist).toBe('Béla Bartók');
+				expect(response[2].artist).toBe('Béla Bartók');
+				expect(response[3].artist).toBe('Radio Head');
+				expect(response[4].artist).toBe('Radio Head');
+				done();
+			});
+	});
+
+	it("should returns lean json with projections", function(done) {
+		new Criteria('Music')
+			.projections(function (p) {
+				p.sum('time');
+				p.groupProperty('album');
+			})
+			.leanJson({
+				time: 0,
+				artist: {index: 1, property: 'artist.name'}
+			})
+			.success(function(response) {
+				expect(response.length).toBe(2);
+				expect(response[0].time).toBe(123);
+				expect(response[0].artist).toBe('Béla Bartók');
+				expect(response[1].artist).toBe('Radio Head');
+				expect(response[1].artist).toBe('Radio Head');
+				done();
+			});
+	});
+
 });
